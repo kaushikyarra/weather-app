@@ -5,7 +5,8 @@ export default async function handler(req, res) {
     const apiKey = process.env.WEATHERSTACK_API_KEY || process.env.VITE_WEATHERSTACK_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
+        console.error('Server Error: Missing API Key. Env Vars:', JSON.stringify(process.env, null, 2)); // Log env vars (careful with secrets, but here we are debugging missing secrets)
+        return res.status(500).json({ error: 'Server configuration error: Missing API Key. Please add WEATHERSTACK_API_KEY to Vercel Environment Variables.' });
     }
 
     const baseUrl = 'http://api.weatherstack.com';
