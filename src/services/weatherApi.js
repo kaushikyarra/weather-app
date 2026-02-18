@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const API_KEY = import.meta.env.VITE_WEATHERSTACK_API_KEY;
-const BASE_URL = 'http://api.weatherstack.com'; // Note: HTTPS is not supported on the free plan
+// Use relative path for local proxy (dev) or vercel serverless (prod)
+const BASE_URL = '/api/weather';
 
 export const weatherApi = {
     getCurrentWeather: async (query) => {
         try {
-            const response = await axios.get(`${BASE_URL}/current`, {
+            const response = await axios.get(BASE_URL, {
                 params: {
-                    access_key: API_KEY,
+                    type: 'current',
                     query: query
                 }
             });
@@ -24,16 +24,14 @@ export const weatherApi = {
 
     getHistoricalWeather: async (query, date) => {
         try {
-            const response = await axios.get(`${BASE_URL}/historical`, {
+            const response = await axios.get(BASE_URL, {
                 params: {
-                    access_key: API_KEY,
+                    type: 'historical',
                     query: query,
-                    historical_date: date,
-                    hourly: 1
+                    historical_date: date
                 }
             });
             if (response.data.error) {
-                // Log but don't crash entirely if historical is restricted
                 console.warn("Historical API Error:", response.data.error.info);
                 return null;
             }
@@ -46,9 +44,9 @@ export const weatherApi = {
 
     getMarineWeather: async (query) => {
         try {
-            const response = await axios.get(`${BASE_URL}/marine`, {
+            const response = await axios.get(BASE_URL, {
                 params: {
-                    access_key: API_KEY,
+                    type: 'marine',
                     query: query
                 }
             });
