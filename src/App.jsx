@@ -48,11 +48,23 @@ function App() {
 
         } catch (err) {
             let userMsg = err.message;
+
+            // Check for backend error message (from api/weather.js)
+            if (err.response && err.response.data && err.response.data.error) {
+                if (typeof err.response.data.error === 'object' && err.response.data.error.info) {
+                    userMsg = err.response.data.error.info;
+                } else if (typeof err.response.data.error === 'string') {
+                    userMsg = err.response.data.error;
+                }
+            }
+
+            // Handle 429 specifically if not covered above
             if (err.response && err.response.status === 429) {
                 userMsg = "Usage limit exceeded. Please try again later.";
             } else if (err.message.includes("429")) {
                 userMsg = "Usage limit exceeded. Please upgrade plan or wait.";
             }
+
             setError(userMsg);
         } finally {
             setLoading(false);
